@@ -195,7 +195,10 @@ fun SignupScreen(
     // Navigate on successful signup
     LaunchedEffect(uiState.signupSuccess) {
         if (uiState.signupSuccess != null) {
-            navController.navigate(Screens.Onboarding.route) {
+            // Use the inputted name, fallback to "Creator" if they left it blank
+            val nameToPass = if (fullName.isNotBlank()) fullName else "Creator"
+
+            navController.navigate("${Screens.Onboarding.route}?displayName=$nameToPass") {
                 popUpTo(Screens.Auth.route) { inclusive = true }
             }
         }
