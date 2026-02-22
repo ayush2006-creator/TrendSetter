@@ -918,18 +918,7 @@ fun DraftContent(
         }
 
         // FAB for New Draft
-        Box(
-            modifier = Modifier
-                .padding(end = 16.dp, bottom = 100.dp)
-                .size(54.dp)
-                .clip(CircleShape)
-                .background(fabBrush)
-                .align(Alignment.BottomEnd)
-                .clickable(onClick = onNewDraft),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(Icons.Rounded.Add, contentDescription = null, tint = Color.White)
-        }
+
     }
 }
 

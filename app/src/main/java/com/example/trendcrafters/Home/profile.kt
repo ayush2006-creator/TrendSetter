@@ -94,19 +94,9 @@ fun ProfileContent(
     ) {
 
         // Error message handling (Visible if 500 error occurs)
-        uiState.errorMessage?.let { msg ->
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0x33FF5370))
-                    .padding(12.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "Server Error: $msg", color = Color.Red, fontSize = 13.sp)
-            }
-        }
 
-        ProfileHeader(onBack, onEdit)
+
+
 
         profile.experience_level?.let {
             AvatarSection(
@@ -311,7 +301,7 @@ private fun SectionLabel(text: String) {
 
 val sampleProfile = OnboardingProfile(
     display_name = "Ayush",
-    creator_type = "Individual",
+    creator_type = "Gaming",
     organization_type = null,
     experience_level = "1–2 years",
     audience_type = "Students",
