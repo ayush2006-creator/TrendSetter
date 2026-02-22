@@ -18,15 +18,12 @@ import androidx.compose.ui.draw.*
 import androidx.compose.ui.focus.*
 import androidx.compose.ui.geometry.*
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.*
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
-import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -96,137 +93,6 @@ private val quickPrompts = listOf(
 // ─────────────────────────────────────────────
 //  ChatScreen
 // ─────────────────────────────────────────────
-
-@Composable
-fun ChatScreen(
-    navHostController: NavHostController,
-    onBack: () -> Unit = {},
-    onScriptGenerated: (String) -> Unit = {}
-) {
-    val messages = remember {
-        mutableStateListOf(
-            ChatMsg(
-                sender = MessageSender.AI,
-                text = "Hey creator! 🎬\n\nTell me the **intent** of the script you want to write — your platform, vibe, topic, and goal. I'll craft a scroll-stopping script tailored to your audience.",
-            )
-        )
-    }
-
-    var inputText by remember { mutableStateOf("") }
-    var isAiTyping by remember { mutableStateOf(false) }
-    val listState = rememberLazyListState()
-    val scope = rememberCoroutineScope()
-    val keyboardController = LocalSoftwareKeyboardController.current
-    var showSuggestions by remember { mutableStateOf(true) }
-
-    // Auto-scroll to bottom when new message arrives
-    LaunchedEffect(messages.size) {
-        if (messages.isNotEmpty()) {
-            listState.animateScrollToItem(messages.size - 1)
-        }
-    }
-
-    fun sendMessage(text: String) {
-        if (text.isBlank()) return
-        showSuggestions = false
-        keyboardController?.hide()
-
-        val userMsg = ChatMsg(sender = MessageSender.USER, text = text.trim())
-        messages.add(userMsg)
-        inputText = ""
-
-        // AI typing indicator
-        isAiTyping = true
-        val typingMsg = ChatMsg(sender = MessageSender.AI, text = "", isTyping = true)
-        messages.add(typingMsg)
-
-        scope.launch {
-            delay(1800L)
-            messages.removeLastOrNull()
-            isAiTyping = false
-
-            val reply = generateAiReply(text)
-            messages.add(ChatMsg(sender = MessageSender.AI, text = reply))
-        }
-    }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-
-        // Background
-        Box(modifier = Modifier.fillMaxSize().background(bgGradient))
-
-        // Glow orbs
-        Box(
-            modifier = Modifier
-                .size(300.dp)
-                .offset(x = (-80).dp, y = (-80).dp)
-                .background(
-                    Brush.radialGradient(listOf(Color(0x1EC060FF), Color.Transparent)),
-                    CircleShape
-                )
-        )
-        Box(
-            modifier = Modifier
-                .size(200.dp)
-                .align(Alignment.BottomEnd)
-                .offset(x = 60.dp, y = (-120).dp)
-                .background(
-                    Brush.radialGradient(listOf(Color(0x14A020FF), Color.Transparent)),
-                    CircleShape
-                )
-        )
-
-        Column(modifier = Modifier.fillMaxSize()) {
-
-            // ── Top App Bar
-            ChatTopBar(onBack = onBack)
-
-            // ── Message List
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.weight(1f),
-                contentPadding = PaddingValues(
-                    horizontal = 16.dp,
-                    vertical = 12.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Quick prompt suggestions (shown only at start)
-                if (showSuggestions) {
-                    item {
-                        QuickPromptsGrid(onPromptClick = { sendMessage(it) })
-                    }
-                }
-
-                items(messages, key = { it.id }) { msg ->
-                    AnimatedVisibility(
-                        visible = true,
-                        enter = fadeIn(tween(300)) + slideInVertically(
-                            tween(300),
-                            initialOffsetY = { it / 2 }
-                        )
-                    ) {
-                        when {
-                            msg.isTyping -> AiTypingBubble()
-                            msg.sender == MessageSender.AI -> AiMessageBubble(msg)
-                            else -> UserMessageBubble(msg)
-                        }
-                    }
-                }
-
-                item { Spacer(modifier = Modifier.height(8.dp)) }
-            }
-
-            // ── Input Bar
-            ChatInputBar(
-                value = inputText,
-                onValueChange = { inputText = it },
-                onSend = { sendMessage(inputText) },
-                isAiTyping = isAiTyping
-            )
-        }
-    }
-}
 
 // ─────────────────────────────────────────────
 //  Top Bar

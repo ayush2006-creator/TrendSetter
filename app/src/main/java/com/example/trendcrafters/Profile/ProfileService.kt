@@ -3,6 +3,7 @@ package com.example.trendcrafters.Profile
 
 
 import com.example.trendcrafters.ApiService.RetrofitClient
+import com.example.trendcrafters.ApiService.RetrofitClient.apiInterface
 import com.example.trendcrafters.Auth.AuthResult
 import com.example.trendcrafters.Auth.TokenManager
 
@@ -15,7 +16,7 @@ object ProfileService {
     suspend fun getProfile(): AuthResult<ProfileResponse> {
         return try {
             val token = TokenManager.bearerHeader()
-            val response = api.getProfile(token)
+            val response = apiInterface.getProfile(token)
             if (response.isSuccessful && response.body() != null) {
                 AuthResult.Success(response.body()!!)
             } else {

@@ -9,10 +9,7 @@ import androidx.navigation.navArgument // <-- ADD THIS IMPORT
 
 import com.example.trendcrafters.SplashScreen
 import com.example.trendcrafters.Auth.AuthScreenHandler
-import com.example.trendcrafters.Home.ChatScreen
-import com.example.trendcrafters.Home.DraftScreen
 import com.example.trendcrafters.Home.Home
-import com.example.trendcrafters.Home.ProfileScreen
 import com.example.trendcrafters.onboarding.QuestionnaireHandler
 import com.example.trendcrafters.onboarding.TodayTrend
 

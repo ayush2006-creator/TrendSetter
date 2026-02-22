@@ -1,6 +1,7 @@
 package com.example.trendcrafters.Profile
 
 
+import com.example.trendcrafters.Home.OnboardingProfile
 import com.google.gson.annotations.SerializedName
 
 // ─── Request Model ────────────────────────────────────────────────────────────
@@ -42,13 +43,18 @@ data class ProfileSaveResponse(
 
 // ─── Helper: map ProfileResponse → OnboardingProfile used by the UI ──────────
 
-fun ProfileResponse.toOnboardingProfile(): com.example.trendcrafters.Home.OnboardingProfile {
-    return com.example.trendcrafters.Home.OnboardingProfile(
-        creatingFor   = listOf(creatorType ?: "Personal Brand"),
-        platforms     = listOf(platform ?: "Instagram Reels"),
-        experience    = experienceLevel ?: "Just starting",
-        followerRange = audienceType ?: "0 – 1K",
-        maxViews      = goals ?: "Unknown",
-        breakthrough  = "Still experimenting"
+fun ProfileResponse?.toOnboardingProfile(): OnboardingProfile {
+    // We use "this?." to handle cases where the server response itself is null
+    return OnboardingProfile(
+        display_name = this?.displayName ?: "Creator",
+        creator_type = this?.creatorType ?: "Individual",
+        organization_type = this?.organizationType, // Optional field
+        experience_level = this?.experienceLevel ?: "Just starting",
+        platform = this?.platform ?: "Instagram",
+        audience_type = this?.audienceType ?: "General",
+
+        goals = this?.goals ?: "Still experimenting",
+        // Safely map the niche names, or return an empty list if null
+        niches = this?.niches?.mapNotNull { it.name } ?: emptyList()
     )
 }

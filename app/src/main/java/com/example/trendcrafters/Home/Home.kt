@@ -37,42 +37,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.trendcrafters.Auth.BackgroundGradientEnd
 import com.example.trendcrafters.Auth.NeonPurple
 import com.example.trendcrafters.assets.LottieAnimationView
+import com.example.trendcrafters.draft.DraftViewModel
 import com.example.trendcrafters.onboarding.VideoCard
 import com.example.trendcrafters.onboarding.VideoItem
 import com.example.trendcrafters.onboarding.getCardPosition
+import com.example.trendcrafters.pytrends.HashtagChip   // ← use ViewModel's version
+import com.example.trendcrafters.pytrends.TrendViewModel
 import kotlinx.coroutines.delay
 
 // ── Configuration & Data ──────────────────────────────────────────────────────
 
-private data class HashtagChip(
-    val tag: String,
-    val color: Color,
-    val nudgeX: Dp,
-    val nudgeY: Dp,
-    val rotation: Float,
-    val scale: Float
-)
+// REMOVED: local HashtagChip data class (use the one from pytrends package)
+// REMOVED: local TrendKeywordResponse data class (use the one from pytrends package)
+// REMOVED: chipData static list (now comes from API)
 
 private data class BottomNavItem(
     val title: String,
     val icon: ImageVector
-)
-
-private val chipData = listOf(
-    HashtagChip("#TrendingN",       Color(0xFFE879F9), (-4).dp,  2.dp,  -3f, 1.05f),
-    HashtagChip("#ContentCr",       Color(0xFF67E8F9),  2.dp, (-3).dp,  2f, 0.95f),
-    HashtagChip("#ViralVideo",      Color(0xFFA5F3FC), (-4).dp,  4.dp,  -5f, 1.00f),
-    HashtagChip("#ReelsLife",       Color(0xFFE879F9),  4.dp, (-2).dp,  4f, 1.08f),
-    HashtagChip("#CreatorMo",       Color(0xFFA5F3FC),  4.dp, (-4).dp,  6f, 1.03f),
-    HashtagChip("#VideoMark",       Color(0xFFE879F9), (-3).dp,  2.dp,  -4f, 0.97f),
-    HashtagChip("#ForYouPag",       Color(0xFF67E8F9), (-2).dp,  4.dp,  -2f, 0.92f),
-    HashtagChip("#ShortForm",       Color(0xFF67E8F9),  2.dp, (-4).dp,  3f, 1.06f),
-    HashtagChip("#GrowYour",        Color(0xFFA5F3FC), (-4).dp,  3.dp,  -6f, 0.94f),
-    HashtagChip("#DigitalCre",      Color(0xFFE879F9),  3.dp, (-2).dp,  5f, 1.01f),
 )
 
 private val navItems = listOf(
@@ -98,6 +83,7 @@ fun Home() {
                 )
             )
     ) {
+        val viewModel: DraftViewModel = viewModel()
         Scaffold(
             containerColor = Color.Transparent,
             bottomBar = {
@@ -109,7 +95,7 @@ fun Home() {
         ) { innerPadding ->
             when (selectedNavIndex) {
                 0 -> HomeContent(modifier = Modifier.padding(innerPadding))
-                1 -> DraftContent(modifier = Modifier.padding(innerPadding))
+                1 -> DraftContent(viewModel)
                 2 -> ChatContent(modifier = Modifier.padding(innerPadding))
                 3 -> ProfileContent(modifier = Modifier.padding(innerPadding))
                 else -> HomeContent(modifier = Modifier.padding(innerPadding))
@@ -117,6 +103,7 @@ fun Home() {
         }
     }
 }
+
 // ── Screen Content ───────────────────────────────────────────────────────────
 
 @Composable
@@ -141,27 +128,21 @@ private fun HomeContent(modifier: Modifier = Modifier) {
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // TOP SECTION: Dynamically sized flexible space for Cards & Player
+        Column(modifier = Modifier.fillMaxSize()) {
             BoxWithConstraints(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-                // Determine responsive sizes using min constraint for landscape/portrait safety
                 val safeBaseSize = min(maxWidth, maxHeight)
                 val cardWidth = safeBaseSize * 0.65f
                 val cardHeight = cardWidth * 1.15f
                 val playerSize = safeBaseSize * 0.45f
 
-                // Center container that holds both the cards and the overlapping player
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    // Container for the cards, slightly offset to the left
                     Box(
                         modifier = Modifier
                             .offset(x = (-20).dp)
@@ -178,28 +159,21 @@ private fun HomeContent(modifier: Modifier = Modifier) {
                         )
                     }
 
-                    // Container for the Lottie Player, positioned on the right edge
                     LottiePlayerButton(
                         playerSize = playerSize,
                         isClicked = isPlayerClicked,
                         onClick = { isPlayerClicked = !isPlayerClicked },
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
-                            .offset(x = (-16).dp, y = 110.dp) // Moved further downward
+                            .offset(x = (-16).dp, y = 110.dp)
                             .zIndex(3f)
                     )
                 }
             }
 
-            // BOTTOM SECTION: Hashtags wrapped nicely at the bottom
-            HashtagSection(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 20.dp)
-            )
+            HashtagSection(niche = "dance")
         }
 
-        // Floating Snackbar Feedback
         selectedVideoIndex?.let { idx ->
             LaunchedEffect(idx) {
                 delay(1800)
@@ -227,7 +201,7 @@ fun CustomBottomNavBar(
         contentColor = Color.White,
         tonalElevation = 0.dp,
         modifier = Modifier
-            .navigationBarsPadding() // Ensures it sits properly above system gestures
+            .navigationBarsPadding()
             .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
             .border(
                 width = 1.dp,
@@ -321,7 +295,6 @@ private fun LottiePlayerButton(
             ),
         contentAlignment = Alignment.Center
     ) {
-        // Soft radial halo behind the player
         Box(
             modifier = Modifier
                 .size(playerSize * playerScale)
@@ -338,14 +311,23 @@ private fun LottiePlayerButton(
 
         LottieAnimationView(
             resId    = R.raw.mp4player,
-            modifier = Modifier
-                .size(playerSize * playerScale)
+            modifier = Modifier.size(playerSize * playerScale)
         )
     }
 }
 
 @Composable
-private fun HashtagSection(modifier: Modifier = Modifier) {
+private fun HashtagSection(
+    modifier: Modifier = Modifier,
+    niche: String
+) {
+    val trendViewModel: TrendViewModel = viewModel()
+    val chips by trendViewModel.chips.collectAsState()  // ← List<HashtagChip> from API
+
+    LaunchedEffect(niche) {
+        trendViewModel.fetchTrends(niche)
+    }
+
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(24.dp))
@@ -358,18 +340,18 @@ private fun HashtagSection(modifier: Modifier = Modifier) {
                 )
             )
             .border(
-                width  = 1.dp,
-                brush  = Brush.verticalGradient(
+                width = 1.dp,
+                brush = Brush.verticalGradient(
                     colors = listOf(
                         Color.White.copy(alpha = 0.40f),
                         Color.White.copy(alpha = 0.10f)
                     )
                 ),
-                shape  = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(24.dp)
             )
             .padding(horizontal = 16.dp, vertical = 22.dp)
     ) {
-        HashtagGridPanel()
+        HashtagGridPanel(chips = chips)  // ← FIXED: pass API chips
     }
 }
 
@@ -441,9 +423,12 @@ private fun HashtagChipItem(chip: HashtagChip, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun HashtagGridPanel(modifier: Modifier = Modifier) {
+private fun HashtagGridPanel(
+    modifier: Modifier = Modifier,
+    chips: List<HashtagChip> = emptyList()  // ← FIXED: param instead of hardcoded chipData
+) {
     val columns = 3
-    val rows = (chipData.size + columns - 1) / columns
+    val rows = (chips.size + columns - 1) / columns
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -457,24 +442,39 @@ private fun HashtagGridPanel(modifier: Modifier = Modifier) {
             letterSpacing = 2.sp,
             modifier = Modifier.padding(start = 8.dp, bottom = 4.dp)
         )
-        for (row in 0 until rows) {
-            Row(
+
+        // ← FIXED: show loading state while API hasn't responded yet
+        if (chips.isEmpty()) {
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    // Adds staggered zigzag look per row safely
-                    .padding(horizontal = if (row % 2 == 1) 12.dp else 0.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    .height(100.dp),
+                contentAlignment = Alignment.Center
             ) {
-                for (col in 0 until columns) {
-                    val idx = row * columns + col
-                    if (idx >= chipData.size) {
-                        Spacer(modifier = Modifier.weight(1f))
-                    } else {
-                        // Using weight(1f) dynamically allocates width so they NEVER overflow!
-                        HashtagChipItem(
-                            chip = chipData[idx],
-                            modifier = Modifier.weight(1f)
-                        )
+                Text(
+                    text = "Loading trends…",
+                    color = Color.White.copy(alpha = 0.45f),
+                    fontSize = 12.sp
+                )
+            }
+        } else {
+            for (row in 0 until rows) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = if (row % 2 == 1) 12.dp else 0.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    for (col in 0 until columns) {
+                        val idx = row * columns + col
+                        if (idx >= chips.size) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        } else {
+                            HashtagChipItem(
+                                chip = chips[idx],  // ← FIXED: uses API chips
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
                     }
                 }
             }
