@@ -22,6 +22,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -874,197 +875,214 @@ private fun FilterRow(
 @Composable
 fun DraftContent(
     viewModel: DraftViewModel,
-
     onDraftClick: (Draft) -> Unit = {},
-    onNewDraft: () -> Unit = {}
+    onNewDraft: () -> Unit = {},
+    onEditDraft: (Draft) -> Unit = {}
 ) {
     val drafts by viewModel.drafts.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
 
-    // Fetch data when the screen loads
-    LaunchedEffect(Unit) {
-        viewModel.loadDrafts()
+    var selectedFilter by remember { mutableStateOf<DraftStatus?>(null) }
+    var draftToDelete by remember { mutableStateOf<Draft?>(null) }
+
+    val filteredDrafts = remember(selectedFilter, drafts) {
+        if (selectedFilter == null) drafts else drafts.filter { it.status == selectedFilter }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(bgGradient)) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
-                color = Purple
-            )
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 80.dp)
-            ) {
-                item {
-                    DraftHeader(
-                        totalCount = drafts.size,
-                        readyCount = drafts.count { it.status == DraftStatus.READY }
-                    )
-                }
+    LaunchedEffect(Unit) { viewModel.loadDrafts() }
 
-                items(drafts, key = { it.id }) { draft ->
-                    DraftCard(
-                        draft = draft,
-                        onClick = { onDraftClick(draft) }
-                    )
-                }
-
-                if (drafts.isEmpty()) {
-                    item { EmptyState() }
-                }
-            }
-        }
-
-        // FAB for New Draft
-
-    }
-}
-
-// ─────────────────────────────────────────────
-// Draft Card
-// ─────────────────────────────────────────────
-@Composable
-fun DraftCard(draft: Draft, onClick: () -> Unit = {}) {
-    val statusColor = statusColors[draft.status] ?: Purple
-    val statusLabel = statusLabels[draft.status] ?: ""
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp)
-            .clip(RoundedCornerShape(20.dp))
-            .background(CardBg)
-            .border(1.dp, CardBorder, RoundedCornerShape(20.dp))
-            .clickable(onClick = onClick)
-    ) {
-        Box(
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .width(3.dp)
-                .fillMaxHeight()
-                .clip(RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp))
-                .background(Brush.verticalGradient(listOf(Purple, PurpleDim)))
-        )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 14.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(5.dp),
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(50.dp))
-                        .background(Color(0x14C060FF))
-                        .border(1.dp, Color(0x2EC060FF), RoundedCornerShape(50.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(text = draft.platformIcon, fontSize = 11.sp)
-                    Text(text = draft.platform, color = PurpleMuted, fontSize = 10.sp, fontWeight = FontWeight.Medium)
-                }
+    // ── Delete confirmation dialog ─────────────────────
+    draftToDelete?.let { draft ->
+        AlertDialog(
+            onDismissRequest = { draftToDelete = null },
+            containerColor = Color(0xFF1A0030),
+            shape = RoundedCornerShape(20.dp),
+            title = {
+                Text("Delete Draft?", color = Color.White, fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text(
+                    "\"${draft.topic}\" will be permanently deleted.",
+                    color = White82.copy(alpha = 0.65f),
+                    fontSize = 13.sp
+                )
+            },
+            confirmButton = {
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(50.dp))
-                        .background(statusColor.copy(alpha = 0.12f))
-                        .border(1.dp, statusColor.copy(alpha = 0.35f), RoundedCornerShape(50.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .background(Color(0x22FF5555))
+                        .border(1.dp, Color(0x44FF5555), RoundedCornerShape(50.dp))
+                        .clickable {
+                            viewModel.deleteDraft(draft.id.toInt())
+                            draftToDelete = null
+                        }
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
-                    Text(text = statusLabel, color = statusColor, fontSize = 10.sp, fontWeight = FontWeight.SemiBold)
+                    Text("Delete", color = RedAccent, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                }
+            },
+            dismissButton = {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(50.dp))
+                        .background(CardBg)
+                        .border(1.dp, CardBorder, RoundedCornerShape(50.dp))
+                        .clickable { draftToDelete = null }
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Text("Cancel", color = PurpleMuted, fontSize = 13.sp)
                 }
             }
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = draft.topic,
-                color = Color.White,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                lineHeight = 20.sp,
-                letterSpacing = (-0.2).sp
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = draft.description,
-                color = White82.copy(alpha = 0.55f),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Normal,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                lineHeight = 17.sp
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                draft.tags.forEach { tag ->
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(50.dp))
-                            .background(Color(0x0FC060FF))
-                            .padding(horizontal = 8.dp, vertical = 3.dp)
-                    ) {
-                        Text(text = tag, color = Purple.copy(alpha = 0.75f), fontSize = 10.sp, fontWeight = FontWeight.Medium)
-                    }
+        )
+    }
+
+    Box(modifier = Modifier.fillMaxSize().background(bgGradient)) {
+
+        // ── Ambient glow ───────────────────────────────
+        Box(
+            modifier = Modifier
+                .size(220.dp)
+                .offset(x = (-40).dp, y = (-40).dp)
+                .background(
+                    Brush.radialGradient(listOf(Color(0x22C060FF), Color.Transparent)),
+                    CircleShape
+                )
+        )
+
+        when {
+            // ── Loading ────────────────────────────────
+            isLoading -> {
+                Column(
+                    modifier = Modifier.align(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    CircularProgressIndicator(color = Purple, strokeWidth = 2.dp, modifier = Modifier.size(32.dp))
+                    Text("Loading drafts…", color = PurpleMuted, fontSize = 12.sp)
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp))
-            HorizontalDivider(color = Color(0x12C060FF), thickness = 1.dp)
-            Spacer(modifier = Modifier.height(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    DateRow(icon = Icons.Rounded.CalendarToday, label = "Created", date = draft.createdDate)
-                    DateRow(icon = Icons.Rounded.Update, label = "Updated", date = draft.updatedDate)
-                }
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Box(
-                        modifier = Modifier.size(32.dp).clip(CircleShape)
-                            .background(Color(0x14C060FF))
-                            .border(1.dp, Color(0x2EC060FF), CircleShape)
-                            .clickable { },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(Icons.Rounded.Edit, contentDescription = "Edit", tint = PurpleMuted, modifier = Modifier.size(15.dp))
-                    }
-                    Box(
-                        modifier = Modifier.size(32.dp).clip(CircleShape)
-                            .background(Color(0x14FF5555))
-                            .border(1.dp, Color(0x2EFF5555), CircleShape)
-                            .clickable { },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(Icons.Rounded.Delete, contentDescription = "Delete", tint = Color(0xFFFF7B7B), modifier = Modifier.size(15.dp))
-                    }
+
+            // ── Error ──────────────────────────────────
+            error != null -> {
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text("⚠️", fontSize = 40.sp)
+                    Text("Something went wrong", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    Text(error ?: "", color = PurpleMuted, fontSize = 12.sp, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(50.dp))
                             .background(Brush.linearGradient(listOf(Purple, PurpleDim)))
-                            .clickable { }
-                            .padding(horizontal = 12.dp, vertical = 6.dp)
+                            .clickable {
+                                viewModel.clearError()
+                                viewModel.loadDrafts()
+                            }
+                            .padding(horizontal = 20.dp, vertical = 10.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Icon(Icons.Rounded.Send, contentDescription = "Post", tint = Color.White, modifier = Modifier.size(13.dp))
-                            Text(text = "Post", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
-                        }
+                        Text("Retry", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                    }
+                }
+            }
+
+            // ── Content ────────────────────────────────
+            else -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 100.dp)
+                ) {
+                    // Header
+                    item {
+                        DraftHeader(
+                            totalCount = drafts.size,
+                            readyCount = drafts.count { it.status == DraftStatus.READY }
+                        )
+                    }
+
+                    // Filter chips
+                    item {
+                        FilterRow(
+                            selectedFilter = selectedFilter,
+                            onFilterSelected = { selectedFilter = if (selectedFilter == it) null else it }
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    // Draft cards — wired edit & delete
+                    items(filteredDrafts, key = { it.id }) { draft ->
+                        DraftCard(
+                            draft = draft,
+                            onClick = { onDraftClick(draft) },
+                            onEdit = { onEditDraft(draft) },
+                            onDelete = { draftToDelete = draft }
+                        )
+                    }
+
+                    // Empty state
+                    if (filteredDrafts.isEmpty()) {
+                        item { EmptyState() }
                     }
                 }
             }
         }
+
+        // ── FAB ────────────────────────────────────────
+        if (!isLoading && error == null) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = 20.dp, bottom = 24.dp)
+                    .size(54.dp)
+                    .clip(CircleShape)
+                    .background(fabBrush)
+                    .clickable(onClick = onNewDraft),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(Icons.Rounded.Add, contentDescription = "New Draft", tint = Color.White, modifier = Modifier.size(26.dp))
+            }
+        }
     }
 }
+// ─────────────────────────────────────────────
+// Draft Card
+// ─────────────────────────────────────────────
+@Composable
+fun DraftCard(
+    draft: Draft,
+    onClick: () -> Unit = {},
+    onEdit: () -> Unit = {},       // ← add these
+    onDelete: () -> Unit = {}      // ← add these
+) {
+    // … existing code unchanged …
 
+    // Replace the Edit icon Box:
+    Box(
+        modifier = Modifier.size(32.dp).clip(CircleShape)
+            .background(Color(0x14C060FF))
+            .border(1.dp, Color(0x2EC060FF), CircleShape)
+            .clickable(onClick = onEdit),   // ← was { }
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(Icons.Rounded.Edit, contentDescription = "Edit", tint = PurpleMuted, modifier = Modifier.size(15.dp))
+    }
+
+    // Replace the Delete icon Box:
+    Box(
+        modifier = Modifier.size(32.dp).clip(CircleShape)
+            .background(Color(0x14FF5555))
+            .border(1.dp, Color(0x2EFF5555), CircleShape)
+            .clickable(onClick = onDelete),  // ← was { }
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(Icons.Rounded.Delete, contentDescription = "Delete", tint = Color(0xFFFF7B7B), modifier = Modifier.size(15.dp))
+    }
+}
 // ─────────────────────────────────────────────
 // Date Row helper
 // ─────────────────────────────────────────────
@@ -1153,5 +1171,29 @@ private fun DraftBottomNavBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
                 }
             }
         }
+    }
+
+}
+@Preview
+@Composable
+fun DraftPreviewScreen() {
+    var currentScreen by remember { mutableStateOf("list") }
+    var selectedDraft by remember { mutableStateOf(sampleDrafts[0]) }
+
+    if (currentScreen == "list") {
+        DraftListContent(
+            drafts = sampleDrafts,
+            onDraftClick = {
+                selectedDraft = it
+                currentScreen = "detail"
+            },
+            onNewDraft = { /* Handle New Draft */ }
+        )
+    } else {
+        DraftDetailScreen(
+            draft = selectedDraft,
+            analysis = sampleAnalysis,
+            onBack = { currentScreen = "list" }
+        )
     }
 }

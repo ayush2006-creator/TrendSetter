@@ -1,7 +1,5 @@
 package com.example.trendcrafters.Home
 
-
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.trendcrafters.Auth.AuthResult
@@ -9,7 +7,6 @@ import com.example.trendcrafters.Profile.ProfileCreateUpdateRequest
 import com.example.trendcrafters.Profile.ProfileResponse
 import com.example.trendcrafters.Profile.ProfileService
 import com.example.trendcrafters.Profile.toOnboardingProfile
-
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -27,8 +24,6 @@ class ProfileViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState
-
-    // ── Load profile on screen open ───────────────────────────────────────────
 
     fun loadProfile() {
         viewModelScope.launch {
@@ -50,8 +45,6 @@ class ProfileViewModel : ViewModel() {
             }
         }
     }
-
-    // ── Save / update profile ─────────────────────────────────────────────────
 
     fun saveProfile(
         displayName: String,
@@ -83,9 +76,9 @@ class ProfileViewModel : ViewModel() {
             _uiState.value = _uiState.value.copy(isSaving = true, errorMessage = null, saveSuccess = false)
             when (val result = ProfileService.saveProfile(request)) {
                 is AuthResult.Success -> {
-                    // Refresh the profile after saving
-                    loadProfile()
+                    // Fix: signal success and stop saving BEFORE refreshing
                     _uiState.value = _uiState.value.copy(isSaving = false, saveSuccess = true)
+                    loadProfile() // refresh in background
                 }
                 is AuthResult.Error -> {
                     _uiState.value = _uiState.value.copy(

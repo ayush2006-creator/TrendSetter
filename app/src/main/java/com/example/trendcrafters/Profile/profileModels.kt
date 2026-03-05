@@ -29,7 +29,7 @@ data class ProfileResponse(
     @SerializedName("audience_type")      val audienceType: String?,
     @SerializedName("platform")           val platform: String?,
     @SerializedName("goals")              val goals: String?,
-    @SerializedName("niches")             val niches: List<NicheResponse>
+    @SerializedName("niches")             val niches: List<String>  // ✅ Fixed
 )
 
 data class NicheResponse(
@@ -55,6 +55,6 @@ fun ProfileResponse?.toOnboardingProfile(): OnboardingProfile {
 
         goals = this?.goals ?: "Still experimenting",
         // Safely map the niche names, or return an empty list if null
-        niches = this?.niches?.mapNotNull { it.name } ?: emptyList()
+        niches = this?.niches ?: emptyList()
     )
 }

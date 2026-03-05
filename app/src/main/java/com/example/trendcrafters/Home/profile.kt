@@ -57,7 +57,6 @@ private val avatarRingBrush = Brush.linearGradient(
 // ─────────────────────────────────────────────
 // MAIN SCREEN
 // ─────────────────────────────────────────────
-
 @Composable
 fun ProfileContent(
     modifier: Modifier = Modifier,
@@ -67,121 +66,113 @@ fun ProfileContent(
 ) {
     val uiState by profileViewModel.uiState.collectAsState()
 
-    // Trigger profile load on entry
     LaunchedEffect(Unit) {
         profileViewModel.loadProfile()
     }
 
-    // Determine what to display. If the backend 500s, uiState.onboardingProfile will be null.
-    // We fallback to sampleProfile to keep the UI from crashing.
-    val profile = uiState.onboardingProfile ?: sampleProfile
+    Box(modifier = modifier.fillMaxSize().background(Color(0xFF0F001C))) {
 
-    if (uiState.isLoading) {
-        Box(
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(color = Purple)
+        // 1. Loading state
+        if (uiState.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = Purple
+            )
+            return@Box
         }
-        return
-    }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .background(Color(0xFF0F001C)) // Dark background for the theme
-    ) {
+        // 2. Error state
+        if (uiState.errorMessage != null) {
+            Column(
+                modifier = Modifier.align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = uiState.errorMessage ?: "Unknown error",
+                    color = Color.Red,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(16.dp)
+                )
+                Spacer(Modifier.height(8.dp))
+                Button(onClick = { profileViewModel.loadProfile() }) {
+                    Text("Retry")
+                }
+            }
+            return@Box
+        }
 
-        // Error message handling (Visible if 500 error occurs)
+        // 3. No profile loaded yet (null after load — API returned nothing)
+        val profile = uiState.onboardingProfile
+        if (profile == null) {
+            Text(
+                text = "No profile found.",
+                color = White82,
+                modifier = Modifier.align(Alignment.Center)
+            )
+            return@Box
+        }
 
-
-
-
-        profile.experience_level?.let {
+        // 4. Actual profile content
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
             AvatarSection(
                 name = profile.display_name,
                 creatorType = profile.creator_type,
-                experienceLevel = it
+                experienceLevel = profile.experience_level ?: "N/A"
             )
-        }
 
-        Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(24.dp))
 
-        profile.experience_level?.let {
             StatsRow(
                 stats = listOf(
-                    StatItem(it, "Experience"),
+                    StatItem(profile.experience_level ?: "N/A", "Experience"),
                     StatItem(profile.audience_type, "Audience"),
                     StatItem(profile.platform, "Platform")
                 )
             )
-        }
 
-        Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(24.dp))
 
-        // Only show Organization if it's not null/blank
-        if (!profile.organization_type.isNullOrBlank()) {
-            SectionLabel("ORGANIZATION")
-            Spacer(Modifier.height(6.dp))
-            InfoCard(label = "Managed By", value = profile.organization_type)
-            Spacer(Modifier.height(16.dp))
-        }
-
-        // Only show Goals if it's not null/blank
-        if (!profile.goals.isNullOrBlank()) {
-            SectionLabel("GOALS")
-            Spacer(Modifier.height(8.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0x0AFFFFFF))
-                    .padding(12.dp)
-            ) {
-                Text(
-                    text = profile.goals,
-                    fontSize = 14.sp,
-                    color = White82,
-                    lineHeight = 20.sp
-                )
+            if (!profile.organization_type.isNullOrBlank()) {
+                SectionLabel("ORGANIZATION")
+                Spacer(Modifier.height(6.dp))
+                InfoCard(label = "Managed By", value = profile.organization_type)
+                Spacer(Modifier.height(16.dp))
             }
-            Spacer(Modifier.height(16.dp))
-        }
 
-        if (profile.niches.isNotEmpty()) {
-            SectionLabel("NICHES")
-            Spacer(Modifier.height(8.dp))
-            HashtagStrip(profile.niches.map { "#${it.replace(" ", "")}" })
-            Spacer(Modifier.height(16.dp))
-        }
+            if (!profile.goals.isNullOrBlank()) {
+                SectionLabel("GOALS")
+                Spacer(Modifier.height(8.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(0x0AFFFFFF))
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = profile.goals,
+                        fontSize = 14.sp,
+                        color = White82,
+                        lineHeight = 20.sp
+                    )
+                }
+                Spacer(Modifier.height(16.dp))
+            }
 
-        Spacer(Modifier.height(40.dp))
-    }
-}
+            if (profile.niches.isNotEmpty()) {
+                SectionLabel("NICHES")
+                Spacer(Modifier.height(8.dp))
+                HashtagStrip(profile.niches.map { "#${it.replace(" ", "")}" })
+                Spacer(Modifier.height(16.dp))
+            }
 
-// ─────────────────────────────────────────────
-// UI COMPONENTS (Header, Avatar, Stats, etc.)
-// ─────────────────────────────────────────────
-
-@Composable
-private fun ProfileHeader(onBack: () -> Unit, onEdit: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp, start = 8.dp, end = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton(onClick = onBack) {
-            Icon(Icons.Rounded.ArrowBackIos, null, tint = White82, modifier = Modifier.size(20.dp))
-        }
-
-        Text("Profile", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
-
-        IconButton(onClick = onEdit) {
-            Icon(Icons.Rounded.Edit, null, tint = White82, modifier = Modifier.size(20.dp))
+            Spacer(Modifier.height(40.dp))
         }
     }
 }
