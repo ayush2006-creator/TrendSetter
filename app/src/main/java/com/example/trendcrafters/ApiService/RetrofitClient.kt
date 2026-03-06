@@ -10,7 +10,7 @@ object RetrofitClient {
     // ⚠️ Change this to your actual server URL
     // For local dev on emulator use: "http://10.0.2.2:8000/"
     // For physical device use your machine's LAN IP: "http://192.168.x.x:8000/"
-    private const val BASE_URL = "http://100.53.53.73:8000/"
+    private const val BASE_URL = "http://13.219.255.154:8000/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY

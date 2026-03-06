@@ -44,11 +44,10 @@ data class StatItem(val value: String, val label: String)
 // THEME COLORS
 // ─────────────────────────────────────────────
 
-private val Purple        = Color(0xFFC060FF)
+
 private val PurpleAlpha12 = Color(0x1FC060FF)
 private val PurpleAlpha25 = Color(0x40C060FF)
-private val White82       = Color(0xD1FFFFFF)
-private val PurpleMuted   = Color(0x80C896FF)
+
 
 private val avatarRingBrush = Brush.linearGradient(
     colors = listOf(Color(0xFFC060FF), Color(0xFF7C3AED), Color(0xFFFF6AB0))

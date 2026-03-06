@@ -32,27 +32,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 // Theme
 // ─────────────────────────────────────────────
 
-private val Purple       = Color(0xFFC060FF)
 private val PurpleMid    = Color(0xFF9B40E0)
 private val PurpleDark   = Color(0xFF7C3AED)
-private val PurpleDim    = Color(0xFF7C3AED)
-private val PurpleMuted  = Color(0xFFB08FCC)
+
 private val White90      = Color(0xE6FFFFFF)
-private val White82      = Color(0xD1FFFFFF)
+
 private val White60      = Color(0x99FFFFFF)
 private val White30      = Color(0x4DFFFFFF)
 private val White10      = Color(0x1AFFFFFF)
 private val UserBubble   = Color(0xFF2A0050)
 private val AiBubble     = Color(0xFF130022)
 private val InputBg      = Color(0xFF200438)
-private val CardBg       = Color(0xFF1A0030)
-private val CardBorder   = Color(0x33C060FF)
-private val GreenAccent  = Color(0xFF4ADE80)
-private val YellowAccent = Color(0xFFFACC15)
-private val OrangeAccent = Color(0xFFFB923C)
-private val NavBg        = Color(0xFF0D001A)
 
-private val bgGradient     = Brush.verticalGradient(listOf(Color(0xFF0D001A), Color(0xFF1A0030)))
+private val OrangeAccent = Color(0xFFFB923C)
+
 private val sendGradient   = Brush.linearGradient(listOf(Purple, PurpleMid))
 private val purpleGradient = Brush.linearGradient(listOf(Purple, PurpleDark))
 

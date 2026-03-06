@@ -51,7 +51,7 @@ data class ReelSourceRemote(
     val id: String?,
     val owner: String?,
     val likes: Int?,
-    val duration: Int?,
+    val duration: Double?,
     val score: Double?,
     val url: String?
 )
@@ -101,7 +101,7 @@ fun ReelsQueryResponse.toApiResult(): ApiResult {
                 id = s.id.orEmpty(),
                 owner = s.owner.orEmpty(),
                 likes = s.likes ?: 0,
-                duration = s.duration ?: 0,
+                duration = (s.duration ?: 0).toDouble(),
                 score = s.score ?: 0.0,
                 url = s.url.orEmpty()
             )

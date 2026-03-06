@@ -65,7 +65,7 @@ data class ReelSource(
     val id: String,
     val owner: String,
     val likes: Int,
-    val duration: Int,
+    val duration: Double,
     val score: Double,
     val url: String
 )
