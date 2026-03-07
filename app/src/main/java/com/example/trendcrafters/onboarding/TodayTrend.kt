@@ -41,11 +41,11 @@ fun TodayTrend(
 ) {
     val videos = remember {
         listOf(
-            VideoItem("https://scontent-iad3-1.cdninstagram.com/o1/v/t16/f2/m86/AQO_Uh5lahMlttjjD7xMSUgxVEoPc2jF7MT17GpWWk7tAtFix5vFvxUU1QcWWHl7kluwOavEhDFrj1xma_puJDpJvv0AWlj-oFU5WZ4.mp4?stp=dst-mp4&efg=eyJxZV9ncm91cHMiOiJbXCJpZ193ZWJfZGVsaXZlcnlfdnRzX290ZlwiXSIsInZlbmNvZGVfdGFnIjoidnRzX3ZvZF91cmxnZW4uY2xpcHMuYzIuNzIwLmJhc2VsaW5lIn0&_nc_cat=108&vs=1901863210754204_1203522180&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC82MTQwODFEQzg0RjU0QzU5RUEwOUM2MEFCMUZDRkVCOF92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HRTRxM2lKdjg0d2k0ZlVIQU03YjFVc2lGQU1KYnN0VEFRQUYVAgLIARIAKAAYABsAFQAAJszFw47fq5ZAFQIoAkMzLBdAPqAAAAAAABgSZGFzaF9iYXNlbGluZV8xX3YxEQB1%2Fgdl5p0BAA%3D%3D&_nc_rid=b8ba62e107&ccb=9-4&oh=00_AfsjHoftzSuBwepsJ51dn-8O2jiviaA2JzVitxGTM9wIaw&oe=699C6C5B&_nc_sid=10d13b", 1),
-            VideoItem("https://scontent-lax3-1.cdninstagram.com/o1/v/t16/f2/m69/AQPDaK57iJduyDhMDmKycGEpSA4cOEVYNiBFbxQXqItYXkE_CSmL8YxtAgln7fU9JfURti2hTikgkD1cpKwRmb3i.mp4?strext=1&_nc_cat=110&_nc_sid=5e9851&_nc_ht=scontent-lax3-1.cdninstagram.com&_nc_ohc=p8UZJUGfjpwQ7kNvwH4zP8-&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uSUdUVi5DMy43MjAuZGFzaF9iYXNlbGluZV8xX3YxIiwieHB2X2Fzc2V0X2lkIjo2MzY2MDcwNTc0NTQ4ODYsImFzc2V0X2FnZV9kYXlzIjoxNDQ5LCJ2aV91c2VjYXNlX2lkIjoxMDE0NSwiZHVyYXRpb25fcyI6NiwidXJsZ2VuX3NvdXJjZSI6Ind3dyJ9&ccb=17-1&_nc_gid=6y0CyDe2hmUX_J5WhcwipQ&_nc_zt=28&vs=a335b3d984e3c973&_nc_vs=HBkcFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HQ0VkWkJCSUNVUXUyV2dDQUI5dEFpMlNaODh0YnZWQkFBQUYVAALIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAmzJyrmLS_oQIVAigCQzMsF0AZMzMzMzMzGBJkYXNoX2Jhc2VsaW5lXzFfdjERAHXsB2XCngEA&oh=00_AfszuZwV2GHdJpgK7pNPYUMwzM3ocwngzRRc0hQ_IYTI2Q&oe=69A06146", 2),
-            VideoItem("https://scontent-lax3-1.cdninstagram.com/o1/v/t16/f2/m69/AQNOiBnGxHzdXbcJ7g2aOm4dSCZsXycYoUKY9pOWyZGI_HsvXcFwIy6-dFO2BJt87RXGoiqxayyZxQAlGHaNppoL.mp4?strext=1&_nc_cat=110&_nc_sid=5e9851&_nc_ht=scontent-lax3-1.cdninstagram.com&_nc_ohc=4kLVjWIy8tIQ7kNvwFsMN7_&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uSUdUVi5DMy4xMjgwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6NTY4NTM0Mzk3Nzc5Mzc3LCJhc3NldF9hZ2VfZGF5cyI6MTM5NiwidmlfdXNlY2FzZV9pZCI6MTAxNDUsImR1cmF0aW9uX3MiOjE5LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_gid=6y0CyDe2hmUX_J5WhcwipQ&_nc_zt=28&vs=e95a628973666755&_nc_vs=HBksFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HSGdscUJETXdGeFk5MmdCQUpVSHFnUV9rQWdkYnZWQkFBQUYVAALIARIAFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HQjc0b1JESEwza2tTeGtJQUUydlp3UWViSFZOYnZWQkFBQUYVAgLIARIAKAAYABsCiAd1c2Vfb2lsATEScHJvZ3Jlc3NpdmVfcmVjaXBlATEVAAAm4vaTrYfFggIVAigCQzMsF0AzszMzMzMzGBJkYXNoX2Jhc2VsaW5lXzFfdjERAHXsB2XCngEA&oh=00_Afs_BvKTEKTBSMHw08Z0dxYQoqKGxf3CYe1eZcbz8L0wJQ&oe=69A050CA", 3),
+            VideoItem("https://hackathon-reels-ayush-2026.s3.us-east-1.amazonaws.com/reels/B10N-x-Bc4-.mp4", 1),
+            VideoItem("https://hackathon-reels-ayush-2026.s3.amazonaws.com/reels/DUUt9BXEgaK.mp4", 2),
+            VideoItem("https://hackathon-reels-ayush-2026.s3.amazonaws.com/reels/DU0aCy1E5ye.mp4", 3),
 
-        )
+            )
     }
 
     var currentRotation by remember { mutableStateOf(0) }
@@ -81,14 +81,11 @@ fun TodayTrend(
         StatusBar()
 
         // Video Stack
-        // We place this BEFORE emojis in the code if we want emojis 'behind',
-        // OR we place it HERE and emojis AFTER if we want emojis 'on top'.
-        // Request: "emoji above video" -> We place Video Stack first, then Emojis.
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset(y = (-100).dp) // Adjusted offset slightly since cards are smaller
-                .size(width = screenWidth, height = cardHeight) // Container matches dynamic height
+                .offset(y = (-100).dp)
+                .size(width = screenWidth, height = cardHeight)
         ) {
             videos.forEachIndexed { index, video ->
                 VideoCard(
@@ -102,7 +99,6 @@ fun TodayTrend(
         }
 
         // Floating Emojis (Placed AFTER video stack to render on top/above)
-        // Positions are now relative to screen size (percentages)
         FloatingEmoji(
             emoji = "😲",
             modifier = Modifier
@@ -162,9 +158,6 @@ fun TodayTrend(
                 lineHeight = 22.sp
             )
         }
-
-        // Arrow decoration
-
 
         // Continue Button
         ContinueButton(
@@ -249,7 +242,6 @@ fun VideoCard(
 ) {
     val transition = updateTransition(targetState = position, label = "cardTransition")
 
-    // Increased translation values slightly for larger cards
     val offsetY by transition.animateFloat(
         transitionSpec = {
             spring(
@@ -260,9 +252,9 @@ fun VideoCard(
         label = "offsetY"
     ) { pos ->
         when (pos) {
-            0 -> -20f  // Back card (left)
-            1 -> -40f  // Middle card (right)
-            2 -> 20f   // Front card
+            0 -> -20f
+            1 -> -40f
+            2 -> 20f
             else -> 0f
         }
     }
@@ -277,9 +269,9 @@ fun VideoCard(
         label = "offsetX"
     ) { pos ->
         when (pos) {
-            0 -> -90f // Shift left (increased from 70f for better visibility with angle)
-            1 -> 90f  // Shift right (increased from 70f)
-            2 -> 0f   // Center
+            0 -> -90f
+            1 -> 90f
+            2 -> 0f
             else -> 0f
         }
     }
@@ -294,9 +286,9 @@ fun VideoCard(
         label = "rotation"
     ) { pos ->
         when (pos) {
-            0 -> -25f // Increased angle
-            1 -> 25f  // Increased angle
-            2 -> -6f  // Slight angle for center
+            0 -> -25f
+            1 -> 25f
+            2 -> -6f
             else -> 0f
         }
     }
@@ -335,22 +327,21 @@ fun VideoCard(
         }
     }
 
-    // Explicit Z-Index to ensure correct stacking order
     val zIndex by transition.animateFloat(
-        transitionSpec = { tween(durationMillis = 300) }, // Faster z-index switch
+        transitionSpec = { tween(durationMillis = 300) },
         label = "zIndex"
     ) { pos ->
         when (pos) {
             0 -> 1f
             1 -> 2f
-            2 -> 3f // Front card on top
+            2 -> 3f
             else -> 0f
         }
     }
 
     Box(
         modifier = modifier
-            .zIndex(zIndex) // Apply Z-Index
+            .zIndex(zIndex)
             .graphicsLayer {
                 translationY = offsetY
                 translationX = offsetX
@@ -359,16 +350,11 @@ fun VideoCard(
                 scaleY = scale
                 this.alpha = alpha
             }
-            .width(width)   // Dynamic Width
-            .height(height) // Dynamic Height
+            .width(width)
+            .height(height)
             .clip(RoundedCornerShape(20.dp))
     ) {
         VideoPlayer(url = videoItem.url)
-
-        // Play indicator
-        PlayIndicator(
-            modifier = Modifier.align(Alignment.Center)
-        )
     }
 }
 
@@ -402,42 +388,6 @@ fun VideoPlayer(url: String) {
         },
         modifier = Modifier.fillMaxSize()
     )
-}
-
-@Composable
-fun PlayIndicator(modifier: Modifier = Modifier) {
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "pulse"
-    )
-
-    Box(
-        modifier = modifier
-            .size(60.dp) // Slightly larger play button for larger cards
-            .scale(scale)
-            .background(Color.White.copy(alpha = 0.9f), CircleShape),
-        contentAlignment = Alignment.Center
-    ) {
-        // Play triangle
-        Canvas(modifier = Modifier.size(24.dp)) {
-            val path = androidx.compose.ui.graphics.Path().apply {
-                moveTo(0f, 0f)
-                lineTo(size.width, size.height / 2)
-                lineTo(0f, size.height)
-                close()
-            }
-            drawPath(
-                path = path,
-                color = Color(0xFF0a1929)
-            )
-        }
-    }
 }
 
 @Composable

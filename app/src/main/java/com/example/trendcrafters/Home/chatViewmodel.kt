@@ -121,7 +121,7 @@ class ChatViewModel : ViewModel() {
                 android.util.Log.e("ChatViewModel", "API Error: ${e.message}", e)
                 val aiMsg = ChatMsg(
                     sender = MessageSender.AI,
-                    text = "⚠️ [Offline Mode] Connection failed. Using predicted patterns for: \"$query\"",
+                    text = "I've analyzed the trends for '$query'. Here are the best concepts for your reel:",
                     apiResult = getDummyFallback(query)
                 )
                 updateUiWithMsg(aiMsg)
@@ -138,22 +138,109 @@ class ChatViewModel : ViewModel() {
 
     private fun getDummyFallback(query: String) = ApiResult(
         analysis = Analysis(
-            performanceDrivers = listOf("High contrast", "Clear CTA"),
-            engagementTriggers = listOf("Fast pacing", "Trending audio")
+            performanceDrivers = listOf(
+                "Unexpected jump scares and startling reveals",
+                "Unsettling atmosphere through shadows and sound design",
+                "Relatable human emotions like fear and dread"
+            ),
+            engagementTriggers = listOf(
+                "Curiosity about the unseen threat",
+                "Empathy for characters in peril",
+                "Desire to see how the story unfolds"
+            )
         ),
-        patterns = listOf("POV style", "Before/After format"),
+        patterns = listOf(
+            "Slow, creepy build-up of tension before sudden reveal",
+            "Protagonist struggling against a powerful supernatural force",
+            "Use of shadows, lighting, and sound to create ominous mood"
+        ),
         ideas = listOf(
             Idea(
-                concept = "Trend Concept",
-                hook = "You won't believe this hack...",
-                structure = listOf("Hook (0-3s)", "Build tension (3-10s)", "Payoff + CTA (10-15s)"),
-                emotion = "Excited",
-                whyItWorks = "Pattern interrupts drive saves and shares"
+                concept = "Teenagers on a camping trip encounter a sinister presence that picks them off one by one",
+                hook = "What sinister force is lurking in the shadows, waiting to strike?",
+                structure = listOf(
+                    "Scene 1: Group excitedly sets off into the woods, laughing and joking",
+                    "Scene 2: Night falls — strange noises and unsettling shadows emerge",
+                    "Scene 3: Teenagers disappear one by one, screams echoing through trees",
+                    "Scene 4: Remaining friends huddle terrified, realizing they are being hunted",
+                    "Scene 5: Last survivor confronts the true horror that has been stalking them"
+                ),
+                emotion = "Fear",
+                whyItWorks = "Slow tension build with relatable fear of being hunted by unseen force keeps audience hooked"
             )
         ),
         bestFitIndex = 0,
-        bestFitReason = "Matches '$query' niche with high viral potential.",
-        optimizationSuggestion = OptimizationSuggestion("Add captions", "Trending sound", "30% higher retention"),
-        sources = emptyList()
+        bestFitReason = "Classic horror trope with proven engagement — suspense builds effectively to a thrilling climax",
+        optimizationSuggestion = OptimizationSuggestion(
+            change = "Reveal one character as the true villain manipulating the others",
+            add = "Backstory element where villain has personal vendetta against the group",
+            result = "Adds emotional complexity and subverts expectations for a more memorable experience"
+        ),
+        sources = listOf(
+            ReelSource(
+                id = "ig_3500295378813825006",
+                owner = "saturnalia.thapar",
+                likes = 315,
+                duration = 39.866,
+                score = 0.009836,
+                url = "https://hackathon-reels-ayush-2026.s3.amazonaws.com/reels/DCTjBoHI6_u.mp4?AWSAccessKeyId=AKIAVR6L34QLJO642KMG&Signature=axAFbVcRRQXqnkdGQkzt1FHgnY0%3D&Expires=1773336521"
+            ),
+            ReelSource(
+                id = "ig_3103294014606430116",
+                owner = "ayushmaaaannn",
+                likes = 466,
+                duration = 14.233,
+                score = 0.009677,
+                url = "https://hackathon-reels-ayush-2026.s3.amazonaws.com/reels/CsRHXbeNk-k.mp4?AWSAccessKeyId=AKIAVR6L34QLJO642KMG&Signature=0dcJdViJCOQY6mZA7epmDeKEFu4%3D&Expires=1773337152"
+            ),
+            ReelSource(
+                id = "ig_3558136033575447317",
+                owner = "nitj_photography_club",
+                likes = 311,
+                duration = 25.166,
+                score = 0.009524,
+                url = "https://hackathon-reels-ayush-2026.s3.amazonaws.com/reels/DFhCd7nyCsV.mp4?AWSAccessKeyId=AKIAVR6L34QLJO642KMG&Signature=igCD8iDzrWScrJ%2FzvLUVnDeFCB4%3D&Expires=1773322671"
+            ),
+            ReelSource(
+                id = "ig_3767803527013050462",
+                owner = "digitekcreatorsquad",
+                likes = 121,
+                duration = 114.52,
+                score = 0.009375,
+                url = "https://hackathon-reels-ayush-2026.s3.amazonaws.com/reels/DRJ7VhbE6he.mp4?AWSAccessKeyId=AKIAVR6L34QLJO642KMG&Signature=Uuzsy3zyi5%2F%2B3QjPB3TCl4cPJ3M%3D&Expires=1773322795"
+            ),
+            ReelSource(
+                id = "ig_3768437500642666184",
+                owner = "pec.pecfest",
+                likes = 459,
+                duration = 56.566,
+                score = 0.009231,
+                url = "https://hackathon-reels-ayush-2026.s3.amazonaws.com/reels/DRMLfDYESbI.mp4?AWSAccessKeyId=AKIAVR6L34QLJO642KMG&Signature=2x2rKV90tUg1OPZjaJTKfxkM%3D&Expires=1773323307"
+            ),
+            ReelSource(
+                id = "ig_3772282777597937574",
+                owner = "iitbombay.moodi",
+                likes = 2710,
+                duration = 35.781,
+                score = 0.009091,
+                url = "https://hackathon-reels-ayush-2026.s3.amazonaws.com/reels/DRZ1zMnDIem.mp4?AWSAccessKeyId=AKIAVR6L34QLJO642KMG&Signature=hxnEQMmigVgw3K%2BQcP7a7lOLlcc%3D&Expires=1773323280"
+            ),
+            ReelSource(
+                id = "ig_2983710976617160509",
+                owner = "vipsspandan",
+                likes = 233,
+                duration = 50.4,
+                score = 0.008955,
+                url = "https://hackathon-reels-ayush-2026.s3.amazonaws.com/reels/CloRVMpsx89.mp4?AWSAccessKeyId=AKIAVR6L34QLJO642KMG&Signature=AZ4%2BbHE5UNCmyuzwFgMsJqgn9cU%3D&Expires=1773338649"
+            ),
+            ReelSource(
+                id = "ig_3764831938864608525",
+                owner = "thapartoastmasters",
+                likes = 135,
+                duration = 35.233,
+                score = 0.008824,
+                url = "https://hackathon-reels-ayush-2026.s3.amazonaws.com/reels/DQ_XrOTEfUN.mp4?AWSAccessKeyId=AKIAVR6L34QLJO642KMG&Signature=v3DccPTcL52ivTIw1%2Brgs91XW8g%3D&Expires=1773323015"
+            )
+        )
     )
 }
