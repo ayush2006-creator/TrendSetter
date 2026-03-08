@@ -1,189 +1,229 @@
-# 🚀 TrendCrafters
+# 🚀 Trend Setter
 
-**TrendCrafters** is a Kotlin Android app built with Jetpack Compose that helps content creators discover trending topics, manage their content drafts, and grow their social media presence on Instagram Reels and YouTube Shorts.
+**Discover Trends. Turn Ideas into Content.**
 
----
+Trend Setter is a **Kotlin-based Android mobile application** that helps
+content creators discover trending topics, hashtags, and content ideas
+while organizing their creative workflow in one place.
 
-## 📱 Screenshots & Features
+The platform combines a **modern Android frontend** with a **FastAPI
+backend** to deliver real-time trend insights and content management
+tools.
 
-### App Flow
-```
-Splash Screen → Today's Trends (Landing) → Auth (Login / Sign Up) → Onboarding Questionnaire → Home
-```
+------------------------------------------------------------------------
 
----
+# 📌 Overview
 
-## ✨ Features
+Trend Setter bridges the gap between **trend discovery and content
+creation** by enabling creators to:
 
-### 🎬 Trending Reels Discovery
-- Animated video card stack on the landing screen showcasing trending reels
-- Videos streamed from AWS S3 using **ExoPlayer (Media3)**
-- Auto-rotating card stack with smooth spring animations every 3 seconds
-- Tap-to-select video cards with ripple feedback
+-   Discover trending hashtags and keywords
+-   Explore trends across niches
+-   Save and organize content ideas
+-   Manage drafts for future posts
+-   Convert trend insights into structured content
 
-### 🔐 Authentication
-- Full **Login** and **Sign Up** screens with email + password
-- Password visibility toggle
-- JWT token management via `tokenManager`
-- Error handling with inline error messages and loading indicators
-- Deep purple glassmorphism UI theme with neon purple gradients
+------------------------------------------------------------------------
 
-### 🧭 Onboarding Questionnaire
-- 7-step personalization questionnaire after sign-up
-- Questions covering content niche, target audience, goals, reel style, vibe, experience level, and platform
-- Multi-select support (content niches)
-- Animated progress bar across questions
-- Final step: content strategy description → profile saved via REST API
+# 🏗 System Architecture
 
-### 🏠 Home Feed
-- Bottom navigation bar with 4 tabs: **Home**, **Drafts**, **Chat**, **Profile**
-- Home tab: animated video card stack + live trending hashtag chips
-- Hashtags fetched from a `pytrends`-powered backend API
-- Interactive hashtag chips with press animations, colors, and rotation effects
-- Lottie animation player button with spring bounce effect
+Android App (Kotlin + Jetpack Compose) │ │ REST API ▼ FastAPI Backend │
+├── Authentication (JWT) ├── Profile Management ├── Draft Management └──
+Trending Data (PyTrends) │ ▼ PostgreSQL Database
 
-### 📝 Drafts Manager
-- View, filter, and manage content drafts
-- Draft statuses: `Ready ✅`, `In Progress ✏️`, `Needs Review 🔍`
-- Filter drafts by status
-- Delete drafts with a confirmation dialog
-- **Draft Detail Screen** (modal bottom sheet) with:
-  - AI-generated content analysis
-  - Performance drivers, engagement triggers, and content patterns
-  - AI-generated content ideas with "Best Fit" recommendation
-  - Optimization tip
-  - "Continue in Chat" option to refine drafts via AI chat
+------------------------------------------------------------------------
 
-### 💬 Chat
-- In-app AI chat screen for discussing and refining content ideas
+# 📱 Frontend (Android Application)
 
-### 👤 Profile
-- User profile screen linked to the backend
+The Android application provides a modern UI for creators to discover
+trends and organize content ideas.
 
----
+Built using **Kotlin + Jetpack Compose** with smooth animations and a
+creator-focused workflow.
 
-## 🛠 Tech Stack
+------------------------------------------------------------------------
 
-| Layer | Technology |
-|---|---|
-| Language | **Kotlin** |
-| UI Framework | **Jetpack Compose** + Material 3 |
-| Navigation | **Compose Navigation** |
-| Networking | **Retrofit 2** + Gson + OkHttp Logging Interceptor |
-| Video Playback | **ExoPlayer (Media3)** |
-| Animations | **Lottie Compose** |
-| Architecture | **MVVM** (ViewModel + StateFlow) |
-| Auth | JWT Token Manager |
-| Min SDK | 24 (Android 7.0) |
-| Target SDK | 36 |
+# ✨ Frontend Features
 
----
+## 🎬 Trending Reels Discovery
 
-## 📁 Project Structure
+-   Animated video card stack
+-   Trending reels streamed from AWS S3
+-   Auto-rotating cards every 3 seconds
+-   Smooth spring animations
 
-```
-com.example.trendcrafters/
-├── ApiService/          # Retrofit API interface & client setup
-├── Auth/                # Login, SignUp screens, AuthViewModel, token manager
-├── Home/                # Home, Drafts, Chat, Profile screens & ViewModels
-├── Profile/             # Profile service & data models
-├── draft/               # Draft repository & DraftViewModel
-├── navigationFiles/     # NavHost & sealed Screens class
-├── onboarding/          # TodayTrend landing, ProfieQuestion questionnaire, reelSelection
-├── pytrends/            # TrendViewModel (fetches trending hashtags from backend)
-├── assets/              # Lottie animation helpers
-├── ui/theme/            # Color palette, typography, app theme
-└── MainActivity.kt      # App entry point
-```
+## 🔐 Authentication
 
----
+-   Login and Signup
+-   JWT-based authentication
+-   Password visibility toggle
+-   Error handling and loading indicators
 
-## 🚦 Getting Started
+## 🧭 Onboarding Personalization
 
-### Prerequisites
-- Android Studio Hedgehog or newer
-- Android device / emulator running API 24+
-- Internet connection (app streams videos from AWS S3 and talks to a backend API)
+7-step questionnaire that collects:
 
-### Setup
+-   Content niche
+-   Target audience
+-   Platform preference
+-   Creator goals
+-   Experience level
+-   Content style
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Jaivesh8/Trend_Setter.git
-   cd Trend_Setter
-   ```
+## 🏠 Home Dashboard
 
-2. **Open in Android Studio**
-   - File → Open → select the `TrendCrafters` folder
+Creator workspace that includes:
 
-3. **Sync Gradle**
-   - Android Studio will automatically sync dependencies
+-   Trending reels
+-   Live trending hashtags
+-   Interactive hashtag chips
+-   AI-powered content inspiration
 
-4. **Run the app**
-   - Select a device/emulator and click ▶️ Run
+## 📝 Draft Manager
 
-> **Note:** The app requires network access to load reels from AWS S3 and to communicate with the trend/auth backend. Cleartext traffic is enabled for development purposes.
+Creators can:
 
----
+-   Create drafts
+-   Update drafts
+-   Delete drafts
+-   View saved drafts
 
-## 🔌 API & Backend
+Draft statuses:
 
-The app communicates with a REST backend for:
+-   Ready
+-   In Progress
+-   Needs Review
 
-| Endpoint | Description |
-|---|---|
-| Auth | Login & Sign Up |
-| Profile | Create / Update user profile after onboarding |
-| Trends | Fetch trending hashtag chips (pytrends-powered) |
-| Drafts | List, create, and delete content drafts |
+## 💬 AI Chat Assistant
 
-Retrofit is configured in `RetrofitClient.kt` with an OkHttp logging interceptor for debug visibility.
+Helps creators:
 
----
+-   Generate reel ideas
+-   Improve captions
+-   Brainstorm viral content
 
-## 🎨 Design Language
+------------------------------------------------------------------------
 
-- **Color palette**: Neon Purple (`#9D4EDD`), Deep Purple (`#320B4D`), gradient black backgrounds
-- **Glassmorphism**: Semi-transparent cards with subtle white borders
-- **Spring animations**: Card stacks, chip presses, and FAB interactions use `Spring.DampingRatioMediumBouncy`
-- **Lottie**: MP4 player button powered by a Lottie JSON animation
+# 🛠 Frontend Tech Stack
 
----
+  Layer          Technology
+  -------------- -----------------------
+  Language       Kotlin
+  UI             Jetpack Compose
+  Architecture   MVVM
+  Networking     Retrofit + Gson
+  Video          ExoPlayer
+  Animations     Lottie
+  Navigation     Compose Navigation
+  State          ViewModel + StateFlow
 
-## 📦 Dependencies
+------------------------------------------------------------------------
 
-```kotlin
-// Networking
-implementation("com.squareup.retrofit2:retrofit:2.9.0")
-implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+# ⚙️ Backend (FastAPI)
 
-// ViewModel
-implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+The backend powers authentication, user profiles, drafts, and trend
+discovery.
 
-// Lottie
-implementation("com.airbnb.android:lottie-compose:6.4.0")
+It exposes REST APIs that the Android application consumes.
 
-// Video Playback (ExoPlayer)
-implementation("androidx.media3:media3-exoplayer:1.2.1")
-implementation("androidx.media3:media3-ui:1.2.1")
-implementation("androidx.media3:media3-common:1.2.1")
+------------------------------------------------------------------------
 
-// Navigation
-implementation("androidx.navigation:navigation-compose:2.8.0")
+# ✨ Backend Features
 
-// Extended Material Icons
-implementation("androidx.compose.material:material-icons-extended")
-```
+## 🔐 Authentication
 
----
+-   User signup
+-   Login
+-   JWT-based authentication
+-   OAuth2 password flow
 
-## 🤝 Contributing
+## 👤 User Profiles
 
-Pull requests are welcome! For major changes, please open an issue first to discuss what you'd like to change.
+Users can:
 
----
+-   Store profile information
+-   Select preferred content niches
+-   Customize creator preferences
 
-## 📄 License
+## 📝 Draft Management
 
-This project was built as part of a hackathon. All rights reserved by the TrendCrafters team.
+Backend APIs support:
+
+-   Creating drafts
+-   Updating drafts
+-   Fetching drafts
+-   Deleting drafts
+
+## 📈 Trending Insights
+
+Trending data is collected using **Google Trends (PyTrends)**.
+
+The backend provides:
+
+-   Trending hashtags
+-   Trending keywords
+-   Emerging topics
+
+------------------------------------------------------------------------
+
+# 🏗 Backend Tech Stack
+
+  Category         Technology
+  ---------------- --------------
+  Language         Python
+  Framework        FastAPI
+  ORM              SQLAlchemy
+  Validation       Pydantic
+  Authentication   JWT + OAuth2
+  Database         PostgreSQL
+  Trend Data       PyTrends
+  Deployment       AWS EC2
+  Server           Uvicorn
+
+------------------------------------------------------------------------
+
+# ▶️ Running the Backend
+
+Start the server:
+
+uvicorn app.main:app --reload
+
+Server runs at:
+
+http://127.0.0.1:8000
+
+API Docs:
+
+http://127.0.0.1:8000/docs
+
+------------------------------------------------------------------------
+
+# 🔌 API Endpoints
+
+Authentication POST /auth/signup POST /auth/login
+
+Profiles GET /profile PUT /profile
+
+Drafts POST /drafts GET /drafts GET /drafts/{{id}} PUT /drafts/{{id}}
+DELETE /drafts/{{id}}
+
+Trends GET /trending/hashtags GET /trending/keywords
+
+------------------------------------------------------------------------
+
+# 👨‍💻 Authors
+Ayush Poddar\
+Computer Science Engineering Student
+
+https://github.com/ayush2006-creator
+
+Jaivesh Chopra\
+Computer Engineering Student
+
+GitHub: https://github.com/Jaivesh8
+
+------------------------------------------------------------------------
+
+# 📄 License
+
+This project was built as part of a **hackathon project**.
